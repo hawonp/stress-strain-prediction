@@ -161,3 +161,5 @@ cython_debug/
 
 raw_data/
 data/
+.DS_Store
+raw_data.zip
