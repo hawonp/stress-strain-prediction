@@ -11,11 +11,9 @@ def apply_material_properties():
     raw_data_dir = CONFIGURATION.raw_data_dir
     images_path = f"./{raw_data_dir}/circles/images"
     processed_images_path = f"./{raw_data_dir}/circles/processed_images"
-    white_circle_value = CONFIGURATION.circle_white
-    black_space_value = CONFIGURATION.circle_black
 
-    logger.info(f"White circle value: {white_circle_value}")
-    logger.info(f"Black space value: {black_space_value}")
+    logger.info(f"White circle value: {CONFIGURATION.circle_white}")
+    logger.info(f"Black space value: {CONFIGURATION.circle_black}")
 
     image_files = [
         f
@@ -34,8 +32,8 @@ def apply_material_properties():
 
         # turn 255 to white_circle_value
         # turn 0 to black_space_value
-        image[image == 255] = white_circle_value
-        image[image == 0] = black_space_value
+        image[image == 255] = CONFIGURATION.circle_white
+        image[image == 0] = CONFIGURATION.circle_black
         cv.imwrite(processed_image_path, image)
 
     logger.info("Material properties applied to circles images")

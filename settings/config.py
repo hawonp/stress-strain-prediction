@@ -29,8 +29,8 @@ class Configuration(BaseSettings):
     # material properties
     circle_white: float = 15.00
     circle_black: float = 3.17
-    square_white: float = 2.1
-    square_black: float = 0.45
+    square_hard: float = 2.1
+    square_soft: float = 0.45
 
 
 CONFIGURATION = Configuration()
