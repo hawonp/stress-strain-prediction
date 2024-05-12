@@ -18,11 +18,7 @@ def generate_square_images():
     for line in raw_data:
         line = line.strip()
         line = line.split(",")
-        matrix = []
-        for char in line:
-            matrix.append(int(char))
+        matrix = [int(i) for i in line]
         matrices.append(matrix)
-    for matrix in matrices:
-        print(matrix)
 
     logger.info("Square images generated")
