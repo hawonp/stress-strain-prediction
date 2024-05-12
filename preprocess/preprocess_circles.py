@@ -20,7 +20,7 @@ def apply_material_properties():
         for f in os.listdir(images_path)
         if os.path.isfile(os.path.join(images_path, f))
     ]
-
+    base_number = 100000
     for image_path in image_files:
         full_path = os.path.join(images_path, image_path)
 
@@ -28,6 +28,7 @@ def apply_material_properties():
 
         # parse only image number
         image_number = image_path.split("-")[2].split("_")[0]
+        image_number = int(image_number) + base_number
         processed_image_path = f"{processed_images_path}/{image_number}.png"
 
         # turn 255 to white_circle_value
