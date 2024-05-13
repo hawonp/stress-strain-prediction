@@ -5,6 +5,7 @@ from settings.config import CONFIGURATION
 
 
 def generate_labels():
+    data_dir = f"./{CONFIGURATION.data_dir}"
     square_raw_data_dir = f"./{CONFIGURATION.raw_data_dir}/squares"
     circle_raw_data_dir = f"./{CONFIGURATION.raw_data_dir}/circles"
 
@@ -41,7 +42,7 @@ def generate_labels():
         )
 
     # read in circle labels
-    circle_labels = pl.read_excel(
+    circle_dataframe = pl.read_excel(
         f"{circle_raw_data_dir}/labels.xlsx",
         read_options={
             "has_header": False,
@@ -49,11 +50,29 @@ def generate_labels():
     )
 
     # drop the first column
-    circle_labels = circle_labels.drop("column_1")
-
-    for series in circle_labels:
-        data = series.to_numpy()
+    circle_dataframe = circle_dataframe.drop("column_1")
 
     # extract each column and put into a tuple
+    i = 1
+    circle_labels = []
+    base_start = 100000
+    for series in circle_dataframe:
+        data = series.to_numpy()
+        circle_labels.append(
+            (
+                f"{circle_processed_images_dir}/{base_start+i}.png",
+                data[0],
+                data[1],
+                data[2],
+            )
+        )
+
+        i += 1
+
+    # combine the two lists
+    labels = square_labels + circle_labels
+
+    # write as csv to disk in the data directory
+    pl.DataFrame(labels).write_csv(f"{data_dir}/labels.csv", include_header=False)
 
     logger.info("Generating labels")

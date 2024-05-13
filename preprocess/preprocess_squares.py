@@ -29,7 +29,7 @@ def generate_square_images():
         matrix = [int(i) for i in line]
         matrix = np.array(matrix).reshape(11, 11)
 
-        # Repeat the matrix to get an 800x800 matrix
+        # Repeat the matrix to get an 792x792 matrix
         repeat_factor = 800 // 11
         large_matrix = np.repeat(
             np.repeat(matrix, repeat_factor, axis=0), repeat_factor, axis=1
@@ -41,6 +41,12 @@ def generate_square_images():
         large_matrix[large_matrix == 1] = CONFIGURATION.square_hard
         large_matrix[large_matrix == 0] = CONFIGURATION.square_soft
 
+        # scale up image to 800x800
+        large_matrix = cv2.resize(
+            large_matrix, (800, 800), interpolation=cv2.INTER_NEAREST
+        )
+
+        # write image to file
         cv2.imwrite(f"{processed_images_path}/{i}.png", large_matrix)
         i += 1
 
