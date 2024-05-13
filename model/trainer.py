@@ -15,18 +15,19 @@ class Trainer:
         self.opt = optimizer
         self.loss_fn = loss_function
         self.model = model
-        self.epo = epochs
+        self.epochs = epochs
         self.train_loader = train_loader
 
     def train(self):
         for epoch in range(self.epochs):
+            self.model = self.model.train(True)
+            print("Epoch: " + str(epoch))
             cum_loss = 0
             for data in tqdm(self.train_loader):
-                self.opt.zero_grad()
-                img, gt = data[0], data[1]
+                img, stiffness, hardness, strength = data[0], data[1], data[2], data[3]
                 result = self.model(img.to(self.device))
-                # result = result.argmax(dim=1)
-                loss = self.loss_fn(result, gt.to(self.device))
+                loss = self.loss_fn(result, stiffness.to(self.device))
+                self.opt.zero_grad()
                 loss.backward()
                 self.opt.step()
                 cum_loss += loss.item()

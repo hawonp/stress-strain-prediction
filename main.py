@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 import torch
 import torch.utils
 import torch.utils.data
@@ -46,20 +45,11 @@ def main():
         shuffle=True,
     )
 
-    test_dataload = torch.utils.data.DataLoader(
-        dataset=testing_dataset,
-        batch_size=CONFIGURATION.batch_size,
-        shuffle=True,
-    )
-    logger.info(f"Number of training batches: {len(train_dataloader)}")
-    logger.info(f"Number of testing batches: {len(test_dataload)}")
-
-    # Display image and label.
-    train_features, stiffness, strength, toughness = next(iter(train_dataloader))
-    print(f"Feature batch shape: {train_features.size()}")
-    img = train_features[0].squeeze()
-    plt.imshow(img, cmap="gray")
-    plt.show()
+    # test_dataload = torch.utils.data.DataLoader(
+    #     dataset=testing_dataset,
+    #     batch_size=CONFIGURATION.batch_size,
+    #     shuffle=True,
+    # )
 
     # load model
     logger.info("Loading model...")
