@@ -14,27 +14,27 @@ class NeuralNetwork(nn.Module):
             # #########################
             # # CONV + MAXPOOL + ReLU #
             # #########################
-            # nn.Conv2d(1, 1, 5),  # output size is 1x394x394
-            # nn.MaxPool2d(2),  # output size is 1x197x197
-            # nn.ReLU(),
+            nn.Conv2d(10, 10, 5),  # output size is 10x394x394
+            nn.MaxPool2d(2),  # output size is 10x197x197
+            nn.ReLU(),
             # #########################
             # # CONV + MAXPOOL + ReLU #
             # #########################
-            # nn.Conv2d(1, 1, 5),  # output size is 1x193x193
-            # nn.MaxPool2d(2),  # output size is 1x96x96
-            # nn.ReLU(),
+            nn.Conv2d(10, 10, 5),  # output size is 10x193x193
+            nn.MaxPool2d(2),  # output size is 10x96x96
+            nn.ReLU(),
             # #########################
             # # CONV + MAXPOOL + ReLU #
             # #########################
-            # nn.Conv2d(1, 1, 5),  # output size is 1x92x92
-            # nn.MaxPool2d(2),  # output size is 1x46x46
-            # nn.ReLU(),
+            nn.Conv2d(10, 10, 5),  # output size is 10x92x92
+            nn.MaxPool2d(2),  # output size is 10x46x46
+            nn.ReLU(),
             #####################
             # REGRESSION OUTPUT #
             #####################
             # simplify to 1x3
             nn.Flatten(),
-            nn.Linear(10 * 398 * 398, 3),
+            nn.Linear(10 * 46 * 46, 3),
         )
         self.model.to(device)
 

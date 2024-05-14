@@ -36,12 +36,6 @@ class TrainTestSplitter:
         torch.randperm(len(labels))
         labels = labels[torch.randperm(len(labels))]
 
-        # turn stiffness, toughness, strength into float
-        for label in labels:
-            label[1] = float(label[1])
-            label[2] = float(label[2])
-            label[3] = float(label[3])
-
         split_index = int(len(labels) * self.training_split)
         training_labels = labels[:split_index]
         test_labels = labels[split_index:]

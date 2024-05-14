@@ -26,18 +26,30 @@ class Trainer:
             print("Epoch: " + str(epoch))
             cum_loss = 0
             for data in tqdm(self.train_loader):
+                # unpack data
                 img, stiffness, hardness, strength = data[0], data[1], data[2], data[3]
                 transforms = v2.Compose(
                     [
                         v2.ToDtype(torch.float32),
                     ]
                 )
+                # transform data
                 img = transforms(img)
                 stiffness = transforms(stiffness)
+                hardness = transforms(hardness)
+                strength = transforms(strength)
+
+                # forward pass
                 result = self.model(img.to(self.device))
+
+                # calculate loss
                 loss = self.loss_fn(result, stiffness.to(self.device))
+
+                # backward pass
                 self.opt.zero_grad()
                 loss.backward()
                 self.opt.step()
+
+                # print loss
                 cum_loss += loss.item()
             print("Cumulative loss: " + str(cum_loss))
