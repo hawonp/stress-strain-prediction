@@ -1,3 +1,5 @@
+import torch
+from torchvision.transforms import v2
 from tqdm import tqdm  # type: ignore
 
 
@@ -25,6 +27,13 @@ class Trainer:
             cum_loss = 0
             for data in tqdm(self.train_loader):
                 img, stiffness, hardness, strength = data[0], data[1], data[2], data[3]
+                transforms = v2.Compose(
+                    [
+                        v2.ToDtype(torch.float32),
+                    ]
+                )
+                img = transforms(img)
+                stiffness = transforms(stiffness)
                 result = self.model(img.to(self.device))
                 loss = self.loss_fn(result, stiffness.to(self.device))
                 self.opt.zero_grad()
