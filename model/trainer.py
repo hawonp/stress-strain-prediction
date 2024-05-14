@@ -27,7 +27,7 @@ class Trainer:
             cum_loss = 0
             for data in tqdm(self.train_loader):
                 # unpack data
-                img, stiffness, hardness, strength = data[0], data[1], data[2], data[3]
+                img, stiffness, strength, hardness = data[0], data[1], data[2], data[3]
                 transforms = v2.Compose(
                     [
                         v2.ToDtype(torch.float32),
@@ -39,11 +39,14 @@ class Trainer:
                 hardness = transforms(hardness)
                 strength = transforms(strength)
 
+                # combine stiffness, strength, and hardness into a 64,3 tensor
+                labels = torch.stack((stiffness, hardness, strength), dim=1)
+
                 # forward pass
                 result = self.model(img.to(self.device))
 
                 # calculate loss
-                loss = self.loss_fn(result, stiffness.to(self.device))
+                loss = self.loss_fn(result, labels.to(self.device))
 
                 # backward pass
                 self.opt.zero_grad()

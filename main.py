@@ -61,7 +61,7 @@ def main():
 
     # load loss function
     logger.info("Loading loss function...")
-    loss_function = torch.nn.CrossEntropyLoss()
+    loss_function = torch.nn.MSELoss()
 
     # load trainer
     logger.info("Loading trainer...")
