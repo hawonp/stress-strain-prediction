@@ -45,11 +45,11 @@ def main():
         shuffle=True,
     )
 
-    # test_dataload = torch.utils.data.DataLoader(
-    #     dataset=testing_dataset,
-    #     batch_size=CONFIGURATION.batch_size,
-    #     shuffle=True,
-    # )
+    test_dataload = torch.utils.data.DataLoader(
+        dataset=testing_dataset,
+        batch_size=CONFIGURATION.batch_size,
+        shuffle=True,
+    )
 
     # load model
     logger.info("Loading model...")
@@ -72,11 +72,16 @@ def main():
         model=model,
         epochs=CONFIGURATION.epochs,
         train_loader=train_dataloader,
+        test_dataload=test_dataload,
     )
 
     # train model
     logger.info("Training model...")
-    trainer.train()
+
+    for i in range(trainer.epochs):
+        logger.info(f"Epoch {i + 1}")
+        trainer.train()
+        trainer.test()
 
     # finish
     logger.info("Done!")
