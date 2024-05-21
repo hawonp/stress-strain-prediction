@@ -25,9 +25,13 @@ class NeuralNetwork(nn.Module):
             nn.Conv2d(20, 20, 5),  # output size is 20x42x42
             nn.MaxPool2d(2),  # output size is 20x21x21
             nn.ReLU(),
+            # layer six
+            nn.Conv2d(20, 20, 5),  # output size is 20x17x17
+            nn.MaxPool2d(2),  # output size is 20x8x8
+            nn.ReLU(),
             # flatten the tensor
             nn.Flatten(),
-            nn.Linear(20 * 21 * 21, 3),
+            nn.Linear(20 * 8 * 8, 3),
         )
         self.model.to(device)
 

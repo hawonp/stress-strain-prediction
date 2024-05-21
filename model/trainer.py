@@ -56,6 +56,7 @@ class Trainer:
             self.opt.step()
 
             running_loss += loss.item() * img.size(0)
+            # print(running_loss)
 
         training_loss = running_loss / len(self.train_loader.dataset)
         logger.info("Training Loss: " + str(training_loss))
@@ -90,6 +91,7 @@ class Trainer:
                 loss = self.loss_fn(result, labels.to(self.device))
 
                 running_loss += loss.item()
+                # print(running_loss)
 
         testing_loss = running_loss / len(self.test_loader.dataset)
         logger.info("Testing loss: " + str(testing_loss))

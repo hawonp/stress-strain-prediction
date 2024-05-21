@@ -25,7 +25,7 @@ def main():
 
     # load configuration
     logger.info("Loading configuration...")
-    logger.info(f"Current configuration: {CONFIGURATION.model_dump()}")
+    logger.debug(f"Current configuration: {CONFIGURATION.model_dump()}")
 
     # separate labels into training and testing according to training_split and test_split
     logger.info("Loading labels...")
@@ -79,16 +79,24 @@ def main():
     # train model
     logger.info("Training model...")
 
+    losses = []
     for i in range(trainer.epochs):
         logger.info(f"Epoch {i + 1}")
         training_loss = trainer.train()
         testing_loss = trainer.test()
+        losses.append((training_loss, testing_loss))
         plt.plot(training_loss, label="Training Loss")
         plt.plot(testing_loss, label="Testing Loss")
         plt.legend()
         plt.show()
     # finish
     logger.info("Done!")
+
+    # save losses
+    logger.info("Saving losses...")
+    with open("losses.txt", "w") as f:
+        for loss in losses:
+            f.write(f"{loss[0]},{loss[1]}\n")
 
 
 if __name__ == "__main__":
