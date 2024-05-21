@@ -1,5 +1,5 @@
+import numpy as np
 import polars as pl
-import torch
 from loguru import logger
 
 from settings.config import CONFIGURATION
@@ -72,9 +72,9 @@ def generate_labels():
         i += 1
 
     # shuffle the square labels
-    torch.manual_seed(0)
-    torch.randperm(len(square_labels))
-    square_labels = square_labels[torch.randperm(len(square_labels))]
+    square_labels = np.array(square_labels)
+    np.random.shuffle(square_labels)
+    square_labels = list(map(tuple, square_labels))
 
     # split square labels into training and testing
     num_of_square_labels = len(square_labels)
@@ -86,9 +86,9 @@ def generate_labels():
     test_square_labels = square_labels[num_of_training_square_labels:]
 
     # shuffle the circle labels
-    torch.manual_seed(0)
-    torch.randperm(len(circle_labels))
-    circle_labels = circle_labels[torch.randperm(len(circle_labels))]
+    circle_labels = np.array(circle_labels)
+    np.random.shuffle(circle_labels)
+    circle_labels = list(map(tuple, circle_labels))
 
     # split circle labels into training and testing
     num_of_circle_labels = len(circle_labels)
