@@ -63,14 +63,13 @@ def main():
     # load loss function
     logger.info("Loading loss function...")
     loss_function = torch.nn.MSELoss()
-    rmse_loss = torch.sqrt(loss_function)
 
     # load trainer
     logger.info("Loading trainer...")
     trainer = Trainer(
         device=device,
         optimizer=optimizer,
-        loss_function=rmse_loss,
+        loss_function=loss_function,
         model=model,
         epochs=CONFIGURATION.epochs,
         train_loader=train_dataloader,
