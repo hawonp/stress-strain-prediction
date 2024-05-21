@@ -45,7 +45,7 @@ def main():
         shuffle=True,
     )
 
-    test_dataload = torch.utils.data.DataLoader(
+    test_dataloader = torch.utils.data.DataLoader(
         dataset=testing_dataset,
         batch_size=CONFIGURATION.batch_size,
         shuffle=True,
@@ -62,17 +62,18 @@ def main():
     # load loss function
     logger.info("Loading loss function...")
     loss_function = torch.nn.MSELoss()
+    rmse_loss = torch.sqrt(loss_function)
 
     # load trainer
     logger.info("Loading trainer...")
     trainer = Trainer(
         device=device,
         optimizer=optimizer,
-        loss_function=loss_function,
+        loss_function=rmse_loss,
         model=model,
         epochs=CONFIGURATION.epochs,
         train_loader=train_dataloader,
-        test_dataload=test_dataload,
+        test_loader=test_dataloader,
     )
 
     # train model

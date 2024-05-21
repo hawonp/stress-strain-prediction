@@ -1,7 +1,7 @@
 import torch
 from loguru import logger
 from torchvision.transforms import v2
-from tqdm import tqdm  # type: ignore
+from tqdm import tqdm
 
 
 class Trainer:
@@ -13,7 +13,7 @@ class Trainer:
         model,
         epochs,
         train_loader,
-        test_dataload,
+        test_loader,
     ):
         self.device = device
         self.opt = optimizer
@@ -21,11 +21,11 @@ class Trainer:
         self.model = model
         self.epochs = epochs
         self.train_loader = train_loader
-        self.test_dataload = test_dataload
+        self.test_loader = test_loader
 
     def train(self):
         self.model.train()
-        cum_loss = 0
+        running_loss = 0
         for data in tqdm(self.train_loader):
             # unpack data
             img, stiffness, strength, hardness = data[0], data[1], data[2], data[3]
@@ -54,18 +54,16 @@ class Trainer:
             loss.backward()
             self.opt.step()
 
-            # print loss
-            # print(loss.data, loss.grad)
-            cum_loss += loss.item() * img.size(0)
-            # print("Loss: " + str(loss.item()))
-        logger.info("Training Loss: " + str(cum_loss / len(self.train_loader)))
+            running_loss += loss.item() * img.size(0)
+
+        training_loss = running_loss / len(self.train_loader.dataset)
+        logger.info("Training Loss: " + str(training_loss))
 
     def test(self):
         self.model.eval()
-        test_loss = 0
-
+        running_loss = 0
         with torch.no_grad():
-            for data in tqdm(self.test_dataload):
+            for data in tqdm(self.test_loader):
                 # unpack data
                 img, stiffness, strength, hardness = data[0], data[1], data[2], data[3]
                 transforms = v2.Compose(
@@ -85,11 +83,10 @@ class Trainer:
                 # forward pass
                 result = self.model(img.to(self.device))
 
-                # calculate lossw
+                # calculate loss
                 loss = self.loss_fn(result, labels.to(self.device))
 
-                # calculate accuracy
-                test_loss += loss.item()
+                running_loss += loss.item() * img.size(0)  # unsure about this line
 
-        test_loss /= len(self.train_loader)
-        logger.info("Testing loss: " + str(test_loss))
+        testing_loss = running_loss / len(self.test_loader.dataset)
+        logger.info("Testing loss: " + str(testing_loss))
