@@ -3,7 +3,7 @@ import torch.utils
 import torch.utils.data
 from loguru import logger
 
-from dataloader.custom_dataloader import CustomDataset, TrainTestSplitter
+from dataloader.custom_dataloader import CustomDataset, LabelLoader
 from model.neural_network import NeuralNetwork
 from model.trainer import Trainer
 from settings.config import CONFIGURATION
@@ -28,8 +28,8 @@ def main():
 
     # separate labels into training and testing according to training_split and test_split
     logger.info("Loading labels...")
-    splitter = TrainTestSplitter()
-    training_labels, test_labels = splitter.split()
+    label_loader = LabelLoader()
+    training_labels, test_labels = label_loader.get()
 
     # load dataset
     logger.info("Loading dataset...")

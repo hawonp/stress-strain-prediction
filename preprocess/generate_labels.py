@@ -1,10 +1,12 @@
 import polars as pl
+import torch
 from loguru import logger
 
 from settings.config import CONFIGURATION
 
 
 def generate_labels():
+    logger.info("Generating labels")
     data_dir = f"./{CONFIGURATION.data_dir}"
     square_raw_data_dir = f"./{CONFIGURATION.raw_data_dir}/squares"
     circle_raw_data_dir = f"./{CONFIGURATION.raw_data_dir}/circles"
@@ -69,10 +71,42 @@ def generate_labels():
 
         i += 1
 
-    # combine the two lists
-    labels = square_labels + circle_labels
+    # shuffle the square labels
+    torch.manual_seed(0)
+    torch.randperm(len(square_labels))
+    square_labels = square_labels[torch.randperm(len(square_labels))]
+
+    # split square labels into training and testing
+    num_of_square_labels = len(square_labels)
+    num_of_training_square_labels = int(
+        num_of_square_labels * CONFIGURATION.training_split
+    )
+
+    train_square_labels = square_labels[:num_of_training_square_labels]
+    test_square_labels = square_labels[num_of_training_square_labels:]
+
+    # shuffle the circle labels
+    torch.manual_seed(0)
+    torch.randperm(len(circle_labels))
+    circle_labels = circle_labels[torch.randperm(len(circle_labels))]
+
+    # split circle labels into training and testing
+    num_of_circle_labels = len(circle_labels)
+    num_of_training_circle_labels = int(
+        num_of_circle_labels * CONFIGURATION.training_split
+    )
+
+    train_circle_labels = circle_labels[:num_of_training_circle_labels]
+    test_circle_labels = circle_labels[num_of_training_circle_labels:]
+
+    # combine labels
+    train_labels = train_square_labels + train_circle_labels
+    test_labels = test_square_labels + test_circle_labels
 
     # write as csv to disk in the data directory
-    pl.DataFrame(labels).write_csv(f"{data_dir}/labels.csv", include_header=False)
-
-    logger.info("Generating labels")
+    pl.DataFrame(train_labels).write_csv(
+        f"{data_dir}/train_labels.csv", include_header=False
+    )
+    pl.DataFrame(test_labels).write_csv(
+        f"{data_dir}/test_labels.csv", include_header=False
+    )

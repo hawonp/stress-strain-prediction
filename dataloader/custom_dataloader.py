@@ -20,24 +20,14 @@ class CustomDataset(torch.utils.data.Dataset):
         return image, stiffness, strength, toughness
 
 
-class TrainTestSplitter:
+class LabelLoader:
     def __init__(self):
-        self.labels = pl.read_csv(
-            f"./{CONFIGURATION.data_dir}/labels.csv", has_header=False
+        self.train_labels = pl.read_csv(
+            f"./{CONFIGURATION.data_dir}/train_labels.csv", has_header=False
         )
-        self.training_split = CONFIGURATION.training_split
+        self.test_labels = pl.read_csv(
+            f"./{CONFIGURATION.data_dir}/test_labels.csv", has_header=False
+        )
 
-    def split(self):
-        # split using pure python and not polars
-        labels = self.labels.to_numpy()
-
-        # shuffle labels
-        torch.manual_seed(0)
-        torch.randperm(len(labels))
-        labels = labels[torch.randperm(len(labels))]
-
-        split_index = int(len(labels) * self.training_split)
-        training_labels = labels[:split_index]
-        test_labels = labels[split_index:]
-
-        return training_labels, test_labels
+    def get(self):
+        return self.train_labels, self.test_labels
