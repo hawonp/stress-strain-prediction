@@ -26,14 +26,15 @@ class Trainer:
     def train(self):
         self.model.train()
         running_loss = 0
+        transforms = v2.Compose(
+            [
+                v2.ToDtype(torch.float32),
+            ]
+        )
         for data in tqdm(self.train_loader):
             # unpack data
             img, stiffness, strength, hardness = data[0], data[1], data[2], data[3]
-            transforms = v2.Compose(
-                [
-                    v2.ToDtype(torch.float32),
-                ]
-            )
+
             # transform data
             img = transforms(img)
             stiffness = transforms(stiffness)
@@ -62,15 +63,16 @@ class Trainer:
     def test(self):
         self.model.eval()
         running_loss = 0
+        transforms = v2.Compose(
+            [
+                v2.ToDtype(torch.float32),
+            ]
+        )
         with torch.no_grad():
             for data in tqdm(self.test_loader):
                 # unpack data
                 img, stiffness, strength, hardness = data[0], data[1], data[2], data[3]
-                transforms = v2.Compose(
-                    [
-                        v2.ToDtype(torch.float32),
-                    ]
-                )
+
                 # transform data
                 img = transforms(img)
                 stiffness = transforms(stiffness)
@@ -86,7 +88,7 @@ class Trainer:
                 # calculate loss
                 loss = self.loss_fn(result, labels.to(self.device))
 
-                running_loss += loss.item() * img.size(0)  # unsure about this line
+                running_loss += loss.item()
 
         testing_loss = running_loss / len(self.test_loader.dataset)
         logger.info("Testing loss: " + str(testing_loss))
