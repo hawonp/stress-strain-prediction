@@ -85,10 +85,7 @@ def main():
         training_loss = trainer.train()
         testing_loss = trainer.test()
         losses.append((training_loss, testing_loss))
-        plt.plot(training_loss, label="Training Loss")
-        plt.plot(testing_loss, label="Testing Loss")
-        plt.legend()
-        plt.show()
+
     # finish
     logger.info("Done!")
 
@@ -97,6 +94,13 @@ def main():
     with open("losses.txt", "w") as f:
         for loss in losses:
             f.write(f"{loss[0]},{loss[1]}\n")
+
+    # plot losses and save
+    logger.info("Plotting losses...")
+    plt.plot([x[0] for x in losses], label="Training Loss")
+    plt.plot([x[1] for x in losses], label="Testing Loss")
+    plt.legend()
+    plt.savefig("losses.png")
 
 
 if __name__ == "__main__":
