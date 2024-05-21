@@ -59,6 +59,7 @@ class Trainer:
 
         training_loss = running_loss / len(self.train_loader.dataset)
         logger.info("Training Loss: " + str(training_loss))
+        return training_loss
 
     def test(self):
         self.model.eval()
@@ -92,3 +93,4 @@ class Trainer:
 
         testing_loss = running_loss / len(self.test_loader.dataset)
         logger.info("Testing loss: " + str(testing_loss))
+        return testing_loss

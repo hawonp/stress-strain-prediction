@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import torch
 import torch.utils
 import torch.utils.data
@@ -81,9 +82,12 @@ def main():
 
     for i in range(trainer.epochs):
         logger.info(f"Epoch {i + 1}")
-        trainer.train()
-        trainer.test()
-
+        training_loss = trainer.train()
+        testing_loss = trainer.test()
+        plt.plot(training_loss, label="Training Loss")
+        plt.plot(testing_loss, label="Testing Loss")
+        plt.legend()
+        plt.show()
     # finish
     logger.info("Done!")
 
