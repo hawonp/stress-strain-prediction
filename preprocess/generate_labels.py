@@ -103,10 +103,21 @@ def generate_labels():
     train_labels = train_square_labels + train_circle_labels
     test_labels = test_square_labels + test_circle_labels
 
-    # write as csv to disk in the data directory
-    pl.DataFrame(train_labels).write_csv(
-        f"{data_dir}/train_labels.csv", include_header=False
+    # convert labels to polars DataFrame where each tuple is a row
+    train_labels_df = pl.DataFrame(
+        train_labels, schema=["image", "stiffness", "strength", "toughness"]
     )
-    pl.DataFrame(test_labels).write_csv(
-        f"{data_dir}/test_labels.csv", include_header=False
+    test_labels_df = pl.DataFrame(
+        test_labels, schema=["image", "stiffness", "strength", "toughness"]
+    )
+
+    # write as csv to disk in the data directory without the string quotation marks
+    train_labels_df.write_csv(
+        f"{data_dir}/train_labels.csv",
+        include_header=False,
+    )
+    test_labels_df.write_csv(
+        f"{data_dir}/test_labels.csv",
+        include_header=False,
+        quote_style="never",
     )
