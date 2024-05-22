@@ -98,9 +98,12 @@ def main():
     # plot losses and save
     logger.info("Plotting losses...")
     plt.plot([x[0] for x in losses], label="Training Loss")
+    plt.legend()
+    plt.savefig("training_loss.png")
+    plt.clf()
     plt.plot([x[1] for x in losses], label="Testing Loss")
     plt.legend()
-    plt.savefig("losses.png")
+    plt.savefig("testing_loss.png")
 
 
 if __name__ == "__main__":
