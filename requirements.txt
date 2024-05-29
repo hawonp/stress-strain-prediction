@@ -26,6 +26,7 @@ six==1.16.0
 sympy==1.12
 torch==2.3.0
 torchaudio==2.3.0
+torcheval==0.0.7
 torchvision==0.18.0
 tqdm==4.66.4
 typing_extensions==4.11.0

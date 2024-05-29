@@ -2,6 +2,7 @@ import sys
 
 import torch
 from loguru import logger
+from torcheval.metrics import R2Score
 from torchvision.transforms import v2
 from tqdm import tqdm
 
@@ -24,6 +25,7 @@ class Trainer:
         self.test_loader = test_loader
         self.best_training_loss = sys.maxsize
         self.best_testing_loss = sys.maxsize
+        self.metric = R2Score()
 
     def save(
         self,
@@ -43,6 +45,7 @@ class Trainer:
                 "training_loss": training_loss,
                 "testing_loss": testing_loss,
             }
+
             torch.save(best_save, "./output/best_save.pth")
 
     def save_statistics(self): ...
@@ -81,9 +84,14 @@ class Trainer:
 
             running_loss += loss.item() * img.size(0)
 
+            # compute r2 score
+            self.metric.update(result, labels.to(self.device))
+            score = float(self.metric.compute())
+
         training_loss = running_loss / len(self.train_loader.dataset)
         logger.info("Training Loss: " + str(training_loss))
-        return training_loss
+        self.metric.reset()
+        return training_loss, score
 
     def test(self):
         self.model.eval()
@@ -114,8 +122,11 @@ class Trainer:
                 loss = self.loss_fn(result, labels.to(self.device))
 
                 running_loss += loss.item()
-                # print(running_loss)
+
+                # compute r2 score
+                self.metric.update(result, labels.to(self.device))
+                score = float(self.metric.compute())
 
         testing_loss = running_loss / len(self.test_loader.dataset)
         logger.info("Testing loss: " + str(testing_loss))
-        return testing_loss
+        return testing_loss, score

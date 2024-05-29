@@ -80,12 +80,15 @@ def main():
 
     for i in range(CONFIGURATION.epochs):
         logger.info(f"Epoch {i + 1}")
-        training_loss = trainer.train()
-        testing_loss = trainer.test()
+        training_loss, train_score = trainer.train()
+        testing_loss, test_score = trainer.test()
         trainer.save(i, training_loss, testing_loss)
 
         with open("./output/losses.txt", "a") as f:
             f.write(f"{training_loss},{testing_loss}\n")
+
+        with open("./output/scores.txt", "a") as f:
+            f.write(f"{train_score},{test_score}\n")
 
     # finish
     logger.info("Done!")
