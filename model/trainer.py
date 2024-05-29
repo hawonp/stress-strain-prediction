@@ -1,3 +1,5 @@
+import sys
+
 import torch
 from loguru import logger
 from torchvision.transforms import v2
@@ -11,7 +13,6 @@ class Trainer:
         optimizer,
         loss_function,
         model,
-        epochs,
         train_loader,
         test_loader,
     ):
@@ -19,9 +20,32 @@ class Trainer:
         self.opt = optimizer
         self.loss_fn = loss_function
         self.model = model
-        self.epochs = epochs
         self.train_loader = train_loader
         self.test_loader = test_loader
+        self.best_training_loss = sys.maxsize
+        self.best_testing_loss = sys.maxsize
+
+    def save(
+        self,
+        epoch: int,
+        training_loss: float,
+        testing_loss: float,
+    ):
+        if training_loss < self.best_training_loss:
+            self.best_training_loss = training_loss
+        if testing_loss < self.best_testing_loss:
+            logger.info("Saving best model...")
+            self.best_testing_loss = testing_loss
+            best_save = {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "optimizer_state_dict": self.opt.state_dict(),
+                "training_loss": training_loss,
+                "testing_loss": testing_loss,
+            }
+            torch.save(best_save, "./output/best_save.pth")
+
+    def save_statistics(self): ...
 
     def train(self):
         self.model.train()
@@ -56,7 +80,6 @@ class Trainer:
             self.opt.step()
 
             running_loss += loss.item() * img.size(0)
-            # print(running_loss)
 
         training_loss = running_loss / len(self.train_loader.dataset)
         logger.info("Training Loss: " + str(training_loss))

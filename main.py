@@ -71,7 +71,6 @@ def main():
         optimizer=optimizer,
         loss_function=loss_function,
         model=model,
-        epochs=CONFIGURATION.epochs,
         train_loader=train_dataloader,
         test_loader=test_dataloader,
     )
@@ -79,31 +78,34 @@ def main():
     # train model
     logger.info("Training model...")
 
-    losses = []
-    for i in range(trainer.epochs):
+    for i in range(CONFIGURATION.epochs):
         logger.info(f"Epoch {i + 1}")
         training_loss = trainer.train()
         testing_loss = trainer.test()
-        losses.append((training_loss, testing_loss))
+        trainer.save(i, training_loss, testing_loss)
+
+        with open("./output/losses.txt", "a") as f:
+            f.write(f"{training_loss},{testing_loss}\n")
 
     # finish
     logger.info("Done!")
 
-    # save losses
-    logger.info("Saving losses...")
-    with open("losses.txt", "w") as f:
-        for loss in losses:
-            f.write(f"{loss[0]},{loss[1]}\n")
-
     # plot losses and save
+    with open("./output/losses.txt", "r") as f:
+        losses = f.readlines()
+        losses = [x.strip().split(",") for x in losses]
+        losses = [(float(x[0]), float(x[1])) for x in losses]
+
     logger.info("Plotting losses...")
     plt.plot([x[0] for x in losses], label="Training Loss")
     plt.legend()
-    plt.savefig("training_loss.png")
+    plt.savefig("output/training_loss.png")
     plt.clf()
     plt.plot([x[1] for x in losses], label="Testing Loss")
     plt.legend()
-    plt.savefig("testing_loss.png")
+    plt.savefig("output/testing_loss.png")
+
+    # TODO: calculate R2 score
 
 
 if __name__ == "__main__":
